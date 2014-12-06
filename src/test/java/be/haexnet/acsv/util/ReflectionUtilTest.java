@@ -8,7 +8,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -75,20 +74,44 @@ public class ReflectionUtilTest {
     }
 
     @Test
-    public void getDefaultConstructor() throws Exception {
+    public void getDefaultConstructorForField() throws Exception {
         final Field field = ReflectionTestData.class.getDeclaredField("withDefaultConstructor");
-
-        final Constructor<?> defaultConstructor = ReflectionUtil.getDefaultConstructor(field);
-        assertThat(defaultConstructor).isNotNull();
+        assertThat(ReflectionUtil.getDefaultConstructor(field)).isNotNull();
     }
 
     @Test
-    public void getDefaultConstructorThrowsACSVAccessException() throws Exception {
+    public void getDefaultConstructorForFieldThrowsACSVConfigurationException() throws Exception {
         expectedException.expect(ACSVConfigurationException.class);
         expectedException.expectMessage("Cannot get default constructor for: class be.haexnet.acsv.util.ReflectionUtilTest$WrongTestData.");
 
         final Field field = ReflectionTestData.class.getDeclaredField("withoutDefaultConstructor");
         ReflectionUtil.getDefaultConstructor(field);
+    }
+
+    @Test
+    public void getDefaultConstructorForClass() throws Exception {
+        assertThat(ReflectionUtil.getDefaultConstructor(CorrectTestData.class)).isNotNull();
+    }
+
+    @Test
+    public void getDefaultConstructorForClassThrowsACSVConfigurationException() throws Exception {
+        expectedException.expect(ACSVConfigurationException.class);
+        expectedException.expectMessage("Cannot get default constructor for: class be.haexnet.acsv.util.ReflectionUtilTest$WrongTestData.");
+
+        ReflectionUtil.getDefaultConstructor(WrongTestData.class);
+    }
+
+    @Test
+    public void createNewInstanceForDefaultConstructorClass() throws Exception {
+        assertThat(ReflectionUtil.createNewInstanceFor(CorrectTestData.class)).isNotNull();
+    }
+
+    @Test
+    public void createNewInstanceForDefaultConstructorClassThrowsACSVAccessException() throws Exception {
+        expectedException.expect(ACSVAccessException.class);
+        expectedException.expectMessage("Cannot create new instance for: class be.haexnet.acsv.util.ReflectionUtilTest$AbstractTestData.");
+
+        ReflectionUtil.createNewInstanceFor(AbstractTestData.class);
     }
 
     private static class ReflectionTestData {
@@ -157,5 +180,7 @@ public class ReflectionUtilTest {
         private Double length;
         private Double weight;
     }
-    
+
+    private static abstract class AbstractTestData {
+    }
 }

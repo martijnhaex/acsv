@@ -5,6 +5,7 @@ import be.haexnet.acsv.exception.ACSVConfigurationException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 public final class ReflectionUtil {
 
@@ -50,5 +51,25 @@ public final class ReflectionUtil {
         }
     }
 
+    public static Constructor<?> getDefaultConstructor(final Class clazz) {
+        try {
+            return clazz.getDeclaredConstructor();
+        } catch (NoSuchMethodException e) {
+            throw new ACSVConfigurationException("Cannot get default constructor for: " + clazz + ".");
+        }
+    }
+
+    public static Object createNewInstanceFor(final Class clazz) {
+        final Constructor<?> defaultConstructor = getDefaultConstructor(clazz);
+        final boolean accessible = defaultConstructor.isAccessible();
+        defaultConstructor.setAccessible(true);
+        try {
+            return defaultConstructor.newInstance();
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            throw new ACSVAccessException("Cannot create new instance for: " + clazz + ".");
+        } finally {
+            defaultConstructor.setAccessible(accessible);
+        }
+    }
 
 }
