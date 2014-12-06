@@ -20,7 +20,7 @@ public class ACSVParserIntegrationTest {
     private ACSVParser<Person> parser = new ACSVParser();
 
     @Test
-    public void parseWillReturnEmptyList() throws Exception {
+    public void parseWillReturnExpectedResult() throws Exception {
         final List<Person> parsedResult = parser.parse(file("person.csv"), Person.class);
         assertThat(parsedResult).hasSize(2);
         assertThat(extractProperty("firstName").from(parsedResult)).containsOnly("Martijn", "Timo");
@@ -47,13 +47,13 @@ public class ACSVParserIntegrationTest {
         return new File(classLoader.getResource(fileName).getFile());
     }
 
-    public static class Person {
+    protected static class Person {
         @ACSVColumn
-        public String firstName;
+        private String firstName;
         @ACSVColumn
-        public String lastName;
+        private String lastName;
         @ACSVColumn
-        public String age;
+        private String age;
 
         public String getAge() {
             return age;
@@ -68,24 +68,24 @@ public class ACSVParserIntegrationTest {
         }
     }
 
-    public static class PersonWithExtraField {
+    protected static class PersonWithExtraField {
         @ACSVColumn
-        public String firstName;
+        private String firstName;
         @ACSVColumn
-        public String lastName;
+        private String lastName;
         @ACSVColumn
-        public String middleName;
+        private String middleName;
         @ACSVColumn
-        public String age;
+        private String age;
     }
 
-    public static class PersonWithWrongFields {
+    protected static class PersonWithWrongFields {
         @ACSVColumn
-        public String firstName;
+        private String firstName;
         @ACSVColumn
-        public String lastName;
+        private String lastName;
         @ACSVColumn
-        public String middleName;
+        private String middleName;
     }
 
 }
