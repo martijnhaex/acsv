@@ -10,9 +10,6 @@ import java.util.List;
 
 public final class AnnotationUtil {
 
-    private AnnotationUtil() {
-    }
-
     public static List<Field> getAnnotatedFieldsOf(final Class clazz, final Class<? extends Annotation> annotation) {
         return FluentIterable
                 .of(getDeclaredFieldsOf(clazz))

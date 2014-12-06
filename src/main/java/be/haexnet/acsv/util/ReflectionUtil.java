@@ -9,8 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 
 public final class ReflectionUtil {
 
-    private ReflectionUtil() { }
-
     public static Object getFieldValue(final Object entity, final Field field) {
         final boolean accessible = field.isAccessible();
         field.setAccessible(true);
