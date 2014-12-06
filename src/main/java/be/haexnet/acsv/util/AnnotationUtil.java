@@ -13,9 +13,9 @@ public final class AnnotationUtil {
     private AnnotationUtil() {
     }
 
-    public static List<Field> getAnnotatedFieldsOf(final Object entity, final Class<? extends Annotation> annotation) {
+    public static List<Field> getAnnotatedFieldsOf(final Class clazz, final Class<? extends Annotation> annotation) {
         return FluentIterable
-                .of(getDeclaredFieldsOf(entity))
+                .of(getDeclaredFieldsOf(clazz))
                 .filter(isAnnotatedWith(annotation))
                 .toList();
     }
@@ -29,8 +29,8 @@ public final class AnnotationUtil {
         return Optional.absent();
     }
 
-    private static Field[] getDeclaredFieldsOf(final Object entity) {
-        return entity.getClass().getDeclaredFields();
+    private static Field[] getDeclaredFieldsOf(final Class clazz) {
+        return clazz.getDeclaredFields();
     }
 
     private static Predicate<Field> isAnnotatedWith(final Class<? extends Annotation> annotation) {

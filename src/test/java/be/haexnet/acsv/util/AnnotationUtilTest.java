@@ -20,19 +20,19 @@ public class AnnotationUtilTest {
 
     @Test
     public void getAnnotatedFieldsWillReturnAllAnnotatedFields() throws Exception {
-        final List<Field> annotatedFields = AnnotationUtil.getAnnotatedFieldsOf(new WithAnnotation(), ACSVColumn.class);
+        final List<Field> annotatedFields = AnnotationUtil.getAnnotatedFieldsOf(WithAnnotation.class, ACSVColumn.class);
         assertThat(annotatedFields).hasSize(2);
         assertThat(extractProperty("name").from(annotatedFields)).containsOnly("name", "function");
     }
 
     @Test
     public void getAnnotatedFieldsWillReturnEmptyListWhenNoAnnotatedFields() throws Exception {
-        assertThat(AnnotationUtil.getAnnotatedFieldsOf(new WithoutAnnotations(), ACSVColumn.class)).isEmpty();
+        assertThat(AnnotationUtil.getAnnotatedFieldsOf(WithoutAnnotations.class, ACSVColumn.class)).isEmpty();
     }
 
     @Test
     public void getAnnotatedFieldsWillReturnEmptyListWhenNoDeclaredFields() throws Exception {
-        assertThat(AnnotationUtil.getAnnotatedFieldsOf(new WithoutFields(), ACSVColumn.class)).isEmpty();
+        assertThat(AnnotationUtil.getAnnotatedFieldsOf(WithoutFields.class, ACSVColumn.class)).isEmpty();
     }
 
     @Test
