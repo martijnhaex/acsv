@@ -19,7 +19,7 @@ public class ACSVParserTest {
         assertThat(parsedResult).hasSize(2);
         assertThat(extractProperty("firstName").from(parsedResult)).containsOnly("Martijn", "Timo");
         assertThat(extractProperty("lastName").from(parsedResult)).containsOnly("Haex", "Lemmens");
-        assertThat(extractProperty("age").from(parsedResult)).containsExactly("24");
+        assertThat(extractProperty("age").from(parsedResult)).containsOnly("24");
     }
 
     private File file(final String fileName) {
