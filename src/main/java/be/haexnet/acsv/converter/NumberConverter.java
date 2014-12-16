@@ -13,9 +13,9 @@ public abstract class NumberConverter<Type> implements TypeConverter<Type> {
             if (NumberUtils.isNumber(value)) {
                 return convert(value);
             }
-            throw new ACSVFormatException(value, getClassFromTypeParameter().getName());
+            throw new ACSVFormatException(value, getClassFromTypeParameter());
         } catch (NumberFormatException e) {
-            throw new ACSVFormatException(value, getClassFromTypeParameter().getName());
+            throw new ACSVFormatException(value, getClassFromTypeParameter());
         }
     }
 
