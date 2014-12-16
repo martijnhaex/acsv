@@ -44,6 +44,11 @@ public class DoubleConverterTest {
         expectACSVFormatException(null);
     }
 
+    @Test
+    public void appliesForDouble() {
+        assertThat(converter.appliesFor()).isEqualTo(Double.class);
+    }
+
     private void expectACSVFormatException(final String value) {
         expectedException.expect(ACSVFormatException.class);
         expectedException.expectMessage("Format exception occurred when converting value [" + value + "] to type [java.lang.Double]");

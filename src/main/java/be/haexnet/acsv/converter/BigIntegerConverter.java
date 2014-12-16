@@ -9,4 +9,9 @@ public class BigIntegerConverter extends NumberConverter<BigInteger> {
         return new BigInteger(value);
     }
 
+    @Override
+    public Class appliesFor() {
+        return BigInteger.class;
+    }
+
 }

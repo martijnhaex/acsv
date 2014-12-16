@@ -9,4 +9,9 @@ public class BigDecimalConverter extends NumberConverter<BigDecimal> {
         return new BigDecimal(value);
     }
 
+    @Override
+    public Class appliesFor() {
+        return BigDecimal.class;
+    }
+
 }

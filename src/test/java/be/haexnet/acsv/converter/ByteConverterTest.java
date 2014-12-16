@@ -35,6 +35,11 @@ public class ByteConverterTest {
         expectACSVFormatException(null);
     }
 
+    @Test
+    public void appliesForByte() {
+        assertThat(converter.appliesFor()).isEqualTo(Byte.class);
+    }
+
     private void expectACSVFormatException(final String value) {
         expectedException.expect(ACSVFormatException.class);
         expectedException.expectMessage("Format exception occurred when converting value [" + value + "] to type [java.lang.Byte]");

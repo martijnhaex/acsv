@@ -34,6 +34,11 @@ public class CharacterConverterTest {
         expectACSVFormatException(null);
     }
 
+    @Test
+    public void appliesForCharacter() {
+        assertThat(converter.appliesFor()).isEqualTo(Character.class);
+    }
+
     private void expectACSVFormatException(final String value) {
         expectedException.expect(ACSVFormatException.class);
         expectedException.expectMessage("Format exception occurred when converting value [" + value + "] to type [java.lang.Character]");

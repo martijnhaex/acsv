@@ -13,4 +13,9 @@ public class CharacterConverter implements TypeConverter<Character> {
         throw new ACSVFormatException(value, Character.class);
     }
 
+    @Override
+    public Class appliesFor() {
+        return Character.class;
+    }
+
 }

@@ -7,4 +7,9 @@ public class IntegerConverter extends NumberConverter<Integer> {
         return Integer.valueOf(value);
     }
 
+    @Override
+    public Class appliesFor() {
+        return Integer.class;
+    }
+
 }

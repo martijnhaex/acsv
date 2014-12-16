@@ -3,11 +3,15 @@ package be.haexnet.acsv;
 import au.com.bytecode.opencsv.CSV;
 import au.com.bytecode.opencsv.CSVReadProc;
 import be.haexnet.acsv.annotation.ACSVColumn;
+import be.haexnet.acsv.converter.DefaultTypeConverter;
+import be.haexnet.acsv.converter.TypeConverter;
 import be.haexnet.acsv.exception.ACSVConfigurationException;
 import be.haexnet.acsv.util.AnnotationUtil;
 import be.haexnet.acsv.util.ReflectionUtil;
+import com.google.common.base.Optional;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +36,7 @@ public class ACSVParser<Entity> {
 
                     for (int i = 0; i < rawHeader.length; i++) {
                         if (rawHeader[i].equals(declaredFieldName)) {
-                            ReflectionUtil.setFieldValue(newInstance, declaredField, rawDataLine[i]);
+                            ReflectionUtil.setFieldValue(newInstance, declaredField, convert(declaredField, rawDataLine[i]));
                             break;
                         }
                     }
@@ -41,6 +45,23 @@ public class ACSVParser<Entity> {
             parsedResult.add(newInstance);
         }
         return parsedResult;
+    }
+
+    private Object convert(final Field field, final String value) {
+        final Optional<Annotation> annotation = AnnotationUtil.getAnnotatedField(field, ACSVColumn.class);
+
+        if (annotation.isPresent()) {
+            final ACSVColumn column = (ACSVColumn) annotation.get();
+            final Class<? extends TypeConverter> converterClass = column.converter();
+
+            if (converterClass.isAssignableFrom(DefaultTypeConverter.class)) {
+                final DefaultTypeConverter defaultTypeConverter = (DefaultTypeConverter) ReflectionUtil.createNewInstanceFor(converterClass);
+                defaultTypeConverter.setField(field);
+                return defaultTypeConverter.apply(value);
+            }
+            return ((TypeConverter) ReflectionUtil.createNewInstanceFor(converterClass)).apply(value);
+        }
+        return null;
     }
 
     private void validateHeader(final String[] rawHeader, final List<Field> annotatedFields) {

@@ -34,6 +34,11 @@ public class LongConverterTest {
         expectACSVFormatException(null);
     }
 
+    @Test
+    public void appliesForLong() {
+        assertThat(converter.appliesFor()).isEqualTo(Long.class);
+    }
+
     private void expectACSVFormatException(final String value) {
         expectedException.expect(ACSVFormatException.class);
         expectedException.expectMessage("Format exception occurred when converting value [" + value + "] to type [java.lang.Long]");

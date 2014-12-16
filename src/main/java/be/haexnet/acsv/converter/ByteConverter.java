@@ -7,4 +7,9 @@ public class ByteConverter extends NumberConverter<Byte> {
         return Byte.valueOf(value);
     }
 
+    @Override
+    public Class appliesFor() {
+        return Byte.class;
+    }
+
 }

@@ -44,6 +44,11 @@ public class FloatConverterTest {
         expectACSVFormatException(null);
     }
 
+    @Test
+    public void appliesForFloat() {
+        assertThat(converter.appliesFor()).isEqualTo(Float.class);
+    }
+
     private void expectACSVFormatException(final String value) {
         expectedException.expect(ACSVFormatException.class);
         expectedException.expectMessage("Format exception occurred when converting value [" + value + "] to type [java.lang.Float]");

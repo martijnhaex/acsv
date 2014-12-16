@@ -57,5 +57,10 @@ public class BooleanConverterTest {
     public void returnsFalseWhenInputIsNull() {
         assertThat(converter.apply(null)).isFalse();
     }
-    
+
+    @Test
+    public void appliesForBoolean() {
+        assertThat(converter.appliesFor()).isEqualTo(Boolean.class);
+    }
+
 }

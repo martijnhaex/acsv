@@ -7,4 +7,9 @@ public class FloatConverter extends NumberConverter<Float> {
         return Float.valueOf(value);
     }
 
+    @Override
+    public Class appliesFor() {
+        return Float.class;
+    }
+
 }

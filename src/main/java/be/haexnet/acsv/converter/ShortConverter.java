@@ -7,4 +7,9 @@ public class ShortConverter extends NumberConverter<Short> {
         return Short.valueOf(value);
     }
 
+    @Override
+    public Class appliesFor() {
+        return Short.class;
+    }
+
 }

@@ -34,6 +34,11 @@ public class IntegerConverterTest {
         expectACSVFormatException(null);
     }
 
+    @Test
+    public void appliesForInteger() {
+        assertThat(converter.appliesFor()).isEqualTo(Integer.class);
+    }
+
     private void expectACSVFormatException(final String value) {
         expectedException.expect(ACSVFormatException.class);
         expectedException.expectMessage("Format exception occurred when converting value [" + value + "] to type [java.lang.Integer]");

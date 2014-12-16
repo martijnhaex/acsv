@@ -6,8 +6,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.math.BigDecimal;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class DefaultTypeConverterTest {
@@ -18,28 +16,38 @@ public class DefaultTypeConverterTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void returnsValueAppliedBySetConverter() {
-        converter.setTypeConverter(new BigDecimalConverter());
-        assertThat(converter.apply("924.9128384924924593")).isEqualTo(new BigDecimal("924.9128384924924593"));
+    public void returnsValueAppliedBySetConverter() throws NoSuchFieldException {
+        converter.setField(Task.class.getDeclaredField("done"));
+        assertThat(converter.apply("t")).isEqualTo(true);
     }
 
     @Test
-    public void throwsACSVFormatExceptionThrownBySetConverter() throws Exception {
+    public void throwsACSVFormatExceptionThrownBySetConverter() throws NoSuchFieldException {
         final String value = "1.1";
 
         expectedException.expect(ACSVFormatException.class);
         expectedException.expectMessage("Format exception occurred when converting value [" + value + "] to type [java.lang.Integer]");
 
-        converter.setTypeConverter(new IntegerConverter());
+        converter.setField(Task.class.getDeclaredField("pages"));
         converter.apply(value);
     }
 
     @Test
-    public void throwsACSVConfigurationExceptionWhenSetConverterIsNull() throws Exception {
+    public void throwsACSVConfigurationExceptionWhenSetConverterIsNull() {
         expectedException.expect(ACSVConfigurationException.class);
         expectedException.expectMessage("Converter for exact type is not configured in DefaultTypeConverter.");
 
         converter.apply("82");
+    }
+
+    @Test
+    public void appliesForObject() {
+        assertThat(converter.appliesFor()).isEqualTo(Object.class);
+    }
+
+    protected static class Task {
+        private Boolean done;
+        private Integer pages;
     }
 
 }

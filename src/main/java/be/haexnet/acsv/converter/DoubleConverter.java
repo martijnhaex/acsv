@@ -7,4 +7,9 @@ public class DoubleConverter extends NumberConverter<Double> {
         return Double.valueOf(value);
     }
 
+    @Override
+    public Class appliesFor() {
+        return Double.class;
+    }
+
 }

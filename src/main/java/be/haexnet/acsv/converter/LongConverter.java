@@ -7,4 +7,9 @@ public class LongConverter extends NumberConverter<Long> {
         return Long.valueOf(value);
     }
 
+    @Override
+    public Class appliesFor() {
+        return Long.class;
+    }
+
 }

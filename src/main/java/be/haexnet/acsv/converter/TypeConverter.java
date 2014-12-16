@@ -2,6 +2,8 @@ package be.haexnet.acsv.converter;
 
 public interface TypeConverter<Type> {
 
-     public Type apply(String value);
+    public Type apply(String value);
+
+    public Class appliesFor();
 
 }
