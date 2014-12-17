@@ -29,9 +29,6 @@ public class DefaultTypeConverter implements TypeConverter {
 
     @Override
     public Object apply(final String value) {
-        typeConverters.add(new BigDecimalConverter());
-        typeConverters.add(new BigIntegerConverter());
-
         if (field != null && getFieldTypeConverter().isPresent()) {
             return getFieldTypeConverter().get().apply(value);
         }
