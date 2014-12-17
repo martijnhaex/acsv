@@ -2,6 +2,7 @@ package be.haexnet.acsv;
 
 import be.haexnet.acsv.data.Embryo;
 import be.haexnet.acsv.exception.ACSVConfigurationException;
+import be.haexnet.acsv.exception.ACSVInputException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -35,6 +36,13 @@ public class EmbryoACSVParserIntegrationTest extends ACSVParserIntegrationTest<E
     @Test
     public void canParseEmptyFileOnlyHeadersWillReturnEmptyList() {
         assertThat(parseFile("empty_embryo.csv", Embryo.class)).isEmpty();
+    }
+
+    @Test
+    public void canParseEmptyFile() {
+        expectedException.expect(ACSVInputException.class);
+        expectedException.expectMessage("Empty CSV File, can not parse.");
+        parseFile("empty.csv", Embryo.class);
     }
 
 }

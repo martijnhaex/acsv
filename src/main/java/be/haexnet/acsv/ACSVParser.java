@@ -6,6 +6,7 @@ import be.haexnet.acsv.annotation.ACSVColumn;
 import be.haexnet.acsv.converter.DefaultTypeConverter;
 import be.haexnet.acsv.converter.TypeConverter;
 import be.haexnet.acsv.exception.ACSVConfigurationException;
+import be.haexnet.acsv.exception.ACSVInputException;
 import be.haexnet.acsv.util.AnnotationUtil;
 import be.haexnet.acsv.util.ReflectionUtil;
 import com.google.common.base.Optional;
@@ -20,31 +21,35 @@ public class ACSVParser<Entity> {
 
     public List<Entity> parse(final File file, final Class targetClass) {
         final List<String[]> rows = getAllRowsFromFile(file);
-        final String[] rawHeader = extractRawHeader(rows);
-        final List<String[]> rawData = extractRawData(rows);
 
-        final List<Field> annotatedFields = AnnotationUtil.getAnnotatedFieldsOf(targetClass, ACSVColumn.class);
-        validateHeader(rawHeader, annotatedFields);
+        if (!rows.isEmpty()) {
+            final String[] rawHeader = extractRawHeader(rows);
+            final List<String[]> rawData = extractRawData(rows);
 
-        final List<Entity> parsedResult = new ArrayList<>();
-        for (final String[] rawDataLine : rawData) {
-            final Entity newInstance = (Entity) ReflectionUtil.createNewInstanceFor(targetClass);
+            final List<Field> annotatedFields = AnnotationUtil.getAnnotatedFieldsOf(targetClass, ACSVColumn.class);
+            validateHeader(rawHeader, annotatedFields);
 
-            for (final Field declaredField : annotatedFields) {
-                if (declaredField.isAnnotationPresent(ACSVColumn.class)) {
-                    final String declaredFieldName = declaredField.getName();
+            final List<Entity> parsedResult = new ArrayList<>();
+            for (final String[] rawDataLine : rawData) {
+                final Entity newInstance = (Entity) ReflectionUtil.createNewInstanceFor(targetClass);
 
-                    for (int i = 0; i < rawHeader.length; i++) {
-                        if (rawHeader[i].equals(declaredFieldName)) {
-                            ReflectionUtil.setFieldValue(newInstance, declaredField, convert(declaredField, rawDataLine[i]));
-                            break;
+                for (final Field declaredField : annotatedFields) {
+                    if (declaredField.isAnnotationPresent(ACSVColumn.class)) {
+                        final String declaredFieldName = declaredField.getName();
+
+                        for (int i = 0; i < rawHeader.length; i++) {
+                            if (rawHeader[i].equals(declaredFieldName)) {
+                                ReflectionUtil.setFieldValue(newInstance, declaredField, convert(declaredField, rawDataLine[i]));
+                                break;
+                            }
                         }
                     }
                 }
+                parsedResult.add(newInstance);
             }
-            parsedResult.add(newInstance);
+            return parsedResult;
         }
-        return parsedResult;
+        throw new ACSVInputException("Empty CSV File, can not parse.");
     }
 
     private Object convert(final Field field, final String value) {
