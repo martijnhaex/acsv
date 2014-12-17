@@ -20,32 +20,44 @@ public class ACSVParser<Entity> {
     public List<Entity> parse(final File file, final Class targetClass) {
         final List<String[]> rows = getAllRowsFromFile(file);
 
-        if (!rows.isEmpty()) {
-            final String[] rawHeader = extractRawHeader(rows);
-            final List<String[]> rawData = extractRawData(rows);
-
-            final List<Field> annotatedFields = AnnotationUtil.getAnnotatedFieldsOf(targetClass, ACSVColumn.class);
-            validateHeader(rawHeader, annotatedFields);
-
-            final List<Entity> parsedResult = new ArrayList<>();
-            for (final String[] rawDataLine : rawData) {
-                final Entity newInstance = (Entity) ReflectionUtil.createNewInstanceFor(targetClass);
-
-                for (final Field declaredField : annotatedFields) {
-                    final String declaredFieldName = declaredField.getName();
-
-                    for (int i = 0; i < rawHeader.length; i++) {
-                        if (rawHeader[i].equals(declaredFieldName)) {
-                            ReflectionUtil.setFieldValue(newInstance, declaredField, convert(declaredField, rawDataLine[i]));
-                            break;
-                        }
-                    }
-                }
-                parsedResult.add(newInstance);
-            }
-            return parsedResult;
+        if (hasData(rows)) {
+            return parseData(rows, targetClass);
         }
         throw new ACSVInputException("Empty CSV File, can not parse.");
+    }
+
+    private boolean hasData(final List<String[]> rows) {
+        return !rows.isEmpty();
+    }
+
+    private List<Entity> parseData(final List<String[]> rows, final Class targetClass) {
+        final String[] rawHeader = extractRawHeader(rows);
+        final List<String[]> rawData = extractRawData(rows);
+
+        final List<Field> annotatedFields = AnnotationUtil.getAnnotatedFieldsOf(targetClass, ACSVColumn.class);
+        validateHeader(rawHeader, annotatedFields);
+
+        final List<Entity> parsedResult = new ArrayList<>();
+        for (final String[] rawDataLine : rawData) {
+            final Entity newInstance = (Entity) ReflectionUtil.createNewInstanceFor(targetClass);
+
+            for (final Field declaredField : annotatedFields) {
+                final String declaredFieldName = getTargetFieldName(declaredField);
+
+                for (int i = 0; i < rawHeader.length; i++) {
+                    if (rawHeader[i].equals(declaredFieldName)) {
+                        ReflectionUtil.setFieldValue(newInstance, declaredField, convert(declaredField, rawDataLine[i]));
+                        break;
+                    }
+                }
+            }
+            parsedResult.add(newInstance);
+        }
+        return parsedResult;
+    }
+
+    private String getTargetFieldName(final Field field) {
+        return field.getName();
     }
 
     private Object convert(final Field field, final String value) {
