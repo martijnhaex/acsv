@@ -9,9 +9,9 @@ public class Person {
     @ACSVColumn
     private String lastName;
     @ACSVColumn
-    private String age;
+    private Integer age;
 
-    public String getAge() {
+    public Integer getAge() {
         return age;
     }
 

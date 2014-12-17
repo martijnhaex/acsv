@@ -14,7 +14,7 @@ import java.util.List;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
-public class ACSVParserIntegrationTest {
+public class PersonACSVParserIntegrationTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -27,7 +27,7 @@ public class ACSVParserIntegrationTest {
         assertThat(parsedResult).hasSize(2);
         assertThat(extractProperty("firstName").from(parsedResult)).containsOnly("Martijn", "Timo");
         assertThat(extractProperty("lastName").from(parsedResult)).containsOnly("Haex", "Lemmens");
-        assertThat(extractProperty("age").from(parsedResult)).containsOnly("24");
+        assertThat(extractProperty("age").from(parsedResult)).containsOnly(24);
     }
 
     @Test

@@ -11,6 +11,6 @@ public class Employee {
     @ACSVColumn
     private String middleName;
     @ACSVColumn
-    private String age;
+    private Integer age;
 
 }

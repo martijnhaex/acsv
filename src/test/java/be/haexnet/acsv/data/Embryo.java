@@ -11,4 +11,16 @@ public class Embryo {
     @ACSVColumn
     private Character gender;
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public Character getGender() {
+        return gender;
+    }
+
 }
