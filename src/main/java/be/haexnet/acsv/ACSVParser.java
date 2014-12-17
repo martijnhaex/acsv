@@ -9,6 +9,7 @@ import be.haexnet.acsv.exception.ACSVConfigurationException;
 import be.haexnet.acsv.exception.ACSVInputException;
 import be.haexnet.acsv.util.AnnotationUtil;
 import be.haexnet.acsv.util.ReflectionUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -57,7 +58,9 @@ public class ACSVParser<Entity> {
     }
 
     private String getTargetFieldName(final Field field) {
-        return field.getName();
+        final ACSVColumn column = (ACSVColumn) AnnotationUtil.getAnnotatedField(field, ACSVColumn.class).get();
+        final String header = column.header();
+        return StringUtils.isNotBlank(header) ? header : field.getName();
     }
 
     private Object convert(final Field field, final String value) {
@@ -78,7 +81,7 @@ public class ACSVParser<Entity> {
                 final String rawHeaderName = rawHeader[i];
                 final Field annotatedField = annotatedFields.get(i);
 
-                if (!rawHeaderName.equals(annotatedField.getName())) {
+                if (!rawHeaderName.equals(getTargetFieldName(annotatedField))) {
                     throw new ACSVConfigurationException("Not expecting header found: " + rawHeaderName + ".");
                 }
             }

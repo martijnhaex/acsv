@@ -14,4 +14,6 @@ public @interface ACSVColumn {
 
     Class<? extends TypeConverter> converter() default DefaultTypeConverter.class;
 
+    String header() default "";
+
 }
