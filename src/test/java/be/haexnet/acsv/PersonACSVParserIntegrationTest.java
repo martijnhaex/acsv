@@ -16,7 +16,7 @@ public class PersonACSVParserIntegrationTest extends ACSVParserIntegrationTest<P
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void parseWillReturnExpectedResult() {
+    public void canParseWillReturnExpectedResult() {
         final List<Person> parsedResult = parseFile("person.csv", Person.class);
         assertThat(parsedResult).hasSize(2);
         assertThat(extractProperty("firstName").from(parsedResult)).containsOnly("Martijn", "Timo");

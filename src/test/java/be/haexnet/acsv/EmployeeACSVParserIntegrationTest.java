@@ -12,7 +12,7 @@ public class EmployeeACSVParserIntegrationTest extends ACSVParserIntegrationTest
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void parseWillThrowErrorWhenColumnCountCSVIsNotEqualToAnnotatedFieldsCount() {
+    public void canParseWillThrowErrorWhenColumnCountCSVIsNotEqualToAnnotatedFieldsCount() {
         expectedException.expect(ACSVConfigurationException.class);
         expectedException.expectMessage("Headers in CSV file not equal to annotated target fields.");
         parseFile("person.csv", Employee.class);

@@ -17,7 +17,7 @@ public class EmbryoACSVParserIntegrationTest extends ACSVParserIntegrationTest<E
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void parseWillThrowErrorWhenColumnHeadersIsNotFoundAsAnnotatedField() {
+    public void canParseWillThrowErrorWhenColumnHeadersIsNotFoundAsAnnotatedField() {
         expectedException.expect(ACSVConfigurationException.class);
         expectedException.expectMessage("Not expecting header found: age.");
         parseFile("person.csv", Embryo.class);
@@ -30,6 +30,11 @@ public class EmbryoACSVParserIntegrationTest extends ACSVParserIntegrationTest<E
         assertThat(extractProperty("firstName").from(parsedResult)).containsOnly("Mayra", "Bram", "Lore");
         assertThat(extractProperty("lastName").from(parsedResult)).containsOnly("Schrooten", "Thijs", "Vandewaerde");
         assertThat(extractProperty("gender").from(parsedResult)).containsOnly('M', 'V');
+    }
+
+    @Test
+    public void canParseEmptyFileOnlyHeadersWillReturnEmptyList() {
+        assertThat(parseFile("empty_embryo.csv", Embryo.class)).isEmpty();
     }
 
 }
