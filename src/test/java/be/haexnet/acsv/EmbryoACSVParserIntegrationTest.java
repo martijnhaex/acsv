@@ -1,30 +1,35 @@
 package be.haexnet.acsv;
 
 import be.haexnet.acsv.data.Embryo;
+import be.haexnet.acsv.exception.ACSVConfigurationException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import java.io.File;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
-public class EmbryoACSVParserIntegrationTest {
+public class EmbryoACSVParserIntegrationTest extends ACSVParserIntegrationTest<Embryo> {
 
-    private ACSVParser<Embryo> parser = new ACSVParser();
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void canParseNonStringFieldCorrectly() throws Exception {
-        final List<Embryo> parsedResult = parser.parse(file("embryo.csv"), Embryo.class);
+    public void parseWillThrowErrorWhenColumnHeadersIsNotFoundAsAnnotatedField() {
+        expectedException.expect(ACSVConfigurationException.class);
+        expectedException.expectMessage("Not expecting header found: age.");
+        parseFile("person.csv", Embryo.class);
+    }
+
+    @Test
+    public void canParseNonStringFieldCorrectly() {
+        final List<Embryo> parsedResult = parseFile("embryo.csv", Embryo.class);
         assertThat(parsedResult).hasSize(3);
         assertThat(extractProperty("firstName").from(parsedResult)).containsOnly("Mayra", "Bram", "Lore");
         assertThat(extractProperty("lastName").from(parsedResult)).containsOnly("Schrooten", "Thijs", "Vandewaerde");
         assertThat(extractProperty("gender").from(parsedResult)).containsOnly('M', 'V');
-    }
-
-    private File file(final String fileName) {
-        final ClassLoader classLoader = getClass().getClassLoader();
-        return new File(classLoader.getResource(fileName).getFile());
     }
 
 }
