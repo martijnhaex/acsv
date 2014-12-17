@@ -9,10 +9,8 @@ import be.haexnet.acsv.exception.ACSVConfigurationException;
 import be.haexnet.acsv.exception.ACSVInputException;
 import be.haexnet.acsv.util.AnnotationUtil;
 import be.haexnet.acsv.util.ReflectionUtil;
-import com.google.common.base.Optional;
 
 import java.io.File;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +32,12 @@ public class ACSVParser<Entity> {
                 final Entity newInstance = (Entity) ReflectionUtil.createNewInstanceFor(targetClass);
 
                 for (final Field declaredField : annotatedFields) {
-                    if (declaredField.isAnnotationPresent(ACSVColumn.class)) {
-                        final String declaredFieldName = declaredField.getName();
+                    final String declaredFieldName = declaredField.getName();
 
-                        for (int i = 0; i < rawHeader.length; i++) {
-                            if (rawHeader[i].equals(declaredFieldName)) {
-                                ReflectionUtil.setFieldValue(newInstance, declaredField, convert(declaredField, rawDataLine[i]));
-                                break;
-                            }
+                    for (int i = 0; i < rawHeader.length; i++) {
+                        if (rawHeader[i].equals(declaredFieldName)) {
+                            ReflectionUtil.setFieldValue(newInstance, declaredField, convert(declaredField, rawDataLine[i]));
+                            break;
                         }
                     }
                 }
@@ -53,20 +49,15 @@ public class ACSVParser<Entity> {
     }
 
     private Object convert(final Field field, final String value) {
-        final Optional<Annotation> annotation = AnnotationUtil.getAnnotatedField(field, ACSVColumn.class);
+        final ACSVColumn column = (ACSVColumn) AnnotationUtil.getAnnotatedField(field, ACSVColumn.class).get();
+        final Class<? extends TypeConverter> converterClass = column.converter();
 
-        if (annotation.isPresent()) {
-            final ACSVColumn column = (ACSVColumn) annotation.get();
-            final Class<? extends TypeConverter> converterClass = column.converter();
-
-            if (converterClass.isAssignableFrom(DefaultTypeConverter.class)) {
-                final DefaultTypeConverter defaultTypeConverter = (DefaultTypeConverter) ReflectionUtil.createNewInstanceFor(converterClass);
-                defaultTypeConverter.setField(field);
-                return defaultTypeConverter.apply(value);
-            }
-            return ((TypeConverter) ReflectionUtil.createNewInstanceFor(converterClass)).apply(value);
+        if (converterClass.isAssignableFrom(DefaultTypeConverter.class)) {
+            final DefaultTypeConverter defaultTypeConverter = (DefaultTypeConverter) ReflectionUtil.createNewInstanceFor(converterClass);
+            defaultTypeConverter.setField(field);
+            return defaultTypeConverter.apply(value);
         }
-        return null;
+        return ((TypeConverter) ReflectionUtil.createNewInstanceFor(converterClass)).apply(value);
     }
 
     private void validateHeader(final String[] rawHeader, final List<Field> annotatedFields) {
